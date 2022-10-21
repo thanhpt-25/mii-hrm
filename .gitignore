@@ -1,0 +1,5 @@
+pgdata/*
+.idea/*
+hrm-backend/dist/*
+.DS_Store
+.env

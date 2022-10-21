@@ -1,0 +1,94 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - NGINX_PORT=${NGINX_PORT}
+      - BACKEND_PORT=${BACKEND_PORT}
+      - FRONTEND_PORT=${FRONTEND_PORT}
+    ports:
+      - 80:${NGINX_PORT}
+    depends_on:
+      - api
+      - postgres
+      - redis
+    networks:
+      - mii-hrm-network
+  api:
+    container_name: "hrm_api_${NODE_ENV}"
+    image: "hrm_api_${NODE_ENV}"
+    environment:
+      - NODE_ENV:${NODE_ENV}
+    build:
+      context: hrm-backend
+      target: "${NODE_ENV}"
+      dockerfile: Dockerfile
+    command: ["./wait-for-postgres.sh","./docker-entrypoint.sh"]
+    env_file:
+      - .env
+    ports:
+      - "9229:9229"
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - mii-hrm-network
+    volumes:
+      - ./hrm-backend:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+  web:
+    container_name: "hrm_front_${NODE_ENV}"
+    image: "hrm_front_${NODE_ENV}"
+    environment:
+      - NODE_ENV:${NODE_ENV}
+    build:
+      context: hrm-frontend
+      target: "${NODE_ENV}"
+      dockerfile: Dockerfile
+    command: [ "./docker-entrypoint.sh" ]
+    env_file:
+      - .env
+    networks:
+      - mii-hrm-network
+    volumes:
+      - ./hrm-frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+  redis:
+    container_name: redis
+    image: redis:latest
+    networks:
+      - mii-hrm-network
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    networks:
+      - mii-hrm-network
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: "${POSTGRES_DB_PREFIX}_${POSTGRES_DB_NAME}"
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_DB_PORT}:${POSTGRES_DB_PORT}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+  pgadmin:
+    links:
+      - postgres:postgres
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    volumes:
+      - ./pgdata/pgadmin:/root/.pgadmin
+    env_file:
+      - .env
+    networks:
+      - mii-hrm-network
+
+networks:
+  mii-hrm-network:
