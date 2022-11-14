@@ -1,32 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import {Injectable} from '@nestjs/common';
+import {UpdateUserDto} from './dto/update-user.dto';
+import {Prisma, User} from '@prisma/client';
+import {DatabaseService} from '../database/database.service';
 
 @Injectable()
 export class UserService {
-  private readonly users = [
-    {
-      id: 1,
-      username: 'john',
-      password: '$2b$10$78QToWYap9xJshegFcI2Ze.f63QkDHi4j6k8U9MWbLMYuJW0qiiey',
-    },
-    {
-      id: 2,
-      username: 'maria',
-      password: '$2b$10$78QToWYap9xJshegFcI2Ze.f63QkDHi4j6k8U9MWbLMYuJW0qiiey',
-    },
-  ];
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private prisma: DatabaseService) {}
+
+  async create(data: Prisma.UserCreateInput): Promise<User> {
+    return this.prisma.user.create({
+      data,
+    });
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(params: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.UserWhereUniqueInput;
+    where?: Prisma.UserWhereInput;
+    orderBy?: Prisma.UserOrderByWithRelationInput;
+  }): Promise<User[]> {
+    const { skip, take, cursor, where, orderBy } = params;
+    return this.prisma.user.findMany({
+      skip,
+      take,
+      cursor,
+      where,
+      orderBy,
+    });
   }
 
   async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
+    return this.prisma.user.findUniqueOrThrow({
+      where: {
+        username,
+      },
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

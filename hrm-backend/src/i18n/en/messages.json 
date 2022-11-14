@@ -1,0 +1,5 @@
+{
+  "MSG_USER_EXISTED": "There is a unique constraint violation, a new user cannot be created with this email {email}",
+  "MSG_SYSTEM_ERROR": "Internal server error",
+  "MSG_USER_NOT_FOUND" : "User「{username}」 is not found."
+}
