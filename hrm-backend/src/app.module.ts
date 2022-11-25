@@ -16,6 +16,7 @@ import {
 import I18nConfig from './config/i18n.config';
 import * as path from 'path';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { RecruitmentRequestModule } from './recruitment-request/recruitment-request.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { HttpExceptionFilter } from './filters/http-exception.filter';
     }),
     AuthenticationModule,
     UserModule,
+    RecruitmentRequestModule,
   ],
   controllers: [AppController],
   providers: [

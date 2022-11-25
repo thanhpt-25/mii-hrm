@@ -16,3 +16,51 @@ model User {
   username  String @unique
   password String
 }
+///
+/// Name : Position
+/// Type : Master
+/// Description : Organization position title
+///
+model Position {
+  id Int @default(autoincrement()) @id
+  name String @default("")
+  requests RecruitmentRequest[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
+}
+///
+/// Name : Skills
+/// Type : Master
+/// Description : Skills master table
+///
+model Skill {
+  id Int @default(autoincrement()) @id
+  name String @default("")
+  requests RecruitmentRequestWithSkill[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
+}
+///
+/// Name : RecruitmentRequest
+/// Description : Store recruitment request
+///
+model RecruitmentRequest {
+  id Int @default(autoincrement()) @id
+  position Position @relation(fields: [positionId], references: [id])        // Position need to be recruited
+  positionId Int
+  amount Int                                  // Number need to be on-board
+  skills RecruitmentRequestWithSkill[]            // Needed Skills
+  deadline  DateTime        // Recruitment deadline
+  expectedDeadline DateTime // Expected to finish recruitment
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+}
+model RecruitmentRequestWithSkill {
+  request       RecruitmentRequest     @relation(fields: [requestId], references: [id])
+  requestId     Int
+  skill         Skill @relation(fields: [skillId], references: [id])
+  skillId       Int
+  @@id([requestId, skillId])
+ }
