@@ -5,16 +5,20 @@ import { UpdateRecruitmentRequestDto } from './dto/update-recruitment-request.dt
 
 @Controller('recruitment-request')
 export class RecruitmentRequestController {
-  constructor(private readonly recruitmentRequestService: RecruitmentRequestService) {}
+  constructor(
+    private readonly recruitmentRequestService: RecruitmentRequestService,
+  ) {}
 
   @Post()
-  create(@Body() createRecruitmentRequestDto: CreateRecruitmentRequestDto) {
-    return this.recruitmentRequestService.create(createRecruitmentRequestDto);
+  async create(@Body() createRecruitmentRequestDto: CreateRecruitmentRequestDto) {
+    return await this.recruitmentRequestService.create(
+      createRecruitmentRequestDto,
+    );
   }
 
   @Get()
-  findAll() {
-    return this.recruitmentRequestService.findAll();
+  async findAll() {
+    return await this.recruitmentRequestService.findAll();
   }
 
   @Get(':id')

@@ -23,6 +23,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     /**
      * Handle un-localized message
      */
+    console.log(format);
+
     if (!format.key) {
       const defaultMessage = exception.getResponse() as {
         statusCode: number;

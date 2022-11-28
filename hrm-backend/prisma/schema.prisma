@@ -37,7 +37,7 @@ model Position {
 model Skill {
   id Int @default(autoincrement()) @id
   name String @default("")
-  requests RecruitmentRequestWithSkill[]
+  requests  RecruitmentRequest[]
   createdAt DateTime @default(now())
   updatedAt DateTime?
   deletedAt DateTime?
@@ -51,16 +51,10 @@ model RecruitmentRequest {
   position Position @relation(fields: [positionId], references: [id])        // Position need to be recruited
   positionId Int
   amount Int                                  // Number need to be on-board
-  skills RecruitmentRequestWithSkill[]            // Needed Skills
+  skills Skill[]            // Needed Skills
   deadline  DateTime        // Recruitment deadline
   expectedDeadline DateTime // Expected to finish recruitment
   createdAt DateTime @default(now())
   updatedAt DateTime?
 }
-model RecruitmentRequestWithSkill {
-  request       RecruitmentRequest     @relation(fields: [requestId], references: [id])
-  requestId     Int
-  skill         Skill @relation(fields: [skillId], references: [id])
-  skillId       Int
-  @@id([requestId, skillId])
- }
+

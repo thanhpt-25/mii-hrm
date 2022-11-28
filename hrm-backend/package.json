@@ -32,6 +32,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/passport-local": "^1.0.34",
     "bcrypt": "^5.1.0",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "i18n": "^0.15.1",
     "nestjs-i18n": "^9.2.2",
